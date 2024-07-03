@@ -20,10 +20,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 //import retrofit2.Retrofit
-
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addTodoActivityLauncher: ActivityResultLauncher<Intent>
     private lateinit var editTodoActivityLauncher: ActivityResultLauncher<Intent>
     private lateinit var database: AppDatabase
-
+    private val titles = mutableListOf<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -65,7 +66,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
+        fetchDataFromApi()
+//        binding.textView.text=titles[0]
         loadDataFromDatabase()
 
         binding.button.setOnClickListener {
@@ -73,7 +75,25 @@ class MainActivity : AppCompatActivity() {
             addTodoActivityLauncher.launch(intent)
         }
     }
-
+    private fun fetchDataFromApi() {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitInstance.api.getData()
+                titles.clear()
+                titles.addAll(response.map { it.title })
+                withContext(Dispatchers.Main) {
+                    // Optionally update UI with titles if needed
+                    Log.d("MainActivity", "Titles: $titles")
+                }
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                Log.e("MainActivity", "HttpException: ${e.message}")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("MainActivity", "Exception: ${e.message}")
+            }
+        }
+    }
     private fun loadDataFromDatabase() {
         GlobalScope.launch(Dispatchers.IO) {
             val tasksFromDb = database.taskDao().getAllTasks()
