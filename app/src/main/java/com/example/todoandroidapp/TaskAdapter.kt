@@ -6,18 +6,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoandroidapp.databinding.ItemTaskBinding
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class TaskAdapter(
     private val tasks: MutableList<Task>,
-    private val editTaskCallback: (Int, String) -> Unit
+    private val editTaskCallback: (Int, String) -> Unit,
+    private val deleteTaskCallback: (Int) -> Unit,
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     inner class TaskViewHolder(private val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(task: Task, position: Int) {
             binding.taskTitle.text = task.name
             binding.button6.setOnClickListener {
-                deleteTask(position)
+                deleteTaskCallback(position)
             }
             binding.button5.setOnClickListener {
                 editTaskCallback(position, task.name)
@@ -36,8 +39,7 @@ class TaskAdapter(
 
     override fun getItemCount(): Int = tasks.size
 
-    private fun deleteTask(position: Int) {
-        tasks.removeAt(position)
-        notifyItemRemoved(position)
-    }
+
+
+
 }

@@ -17,7 +17,7 @@
 
         <TextView
             android:id="@+id/taskTitle"
-            android:layout_width="180dp"
+            android:layout_width="166dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             tools:text="HELLO IAM THERE" />
@@ -26,6 +26,7 @@
             android:id="@+id/button5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
             android:text="Edit" />
 
         <Button

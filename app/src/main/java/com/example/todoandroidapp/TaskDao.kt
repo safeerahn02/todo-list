@@ -8,7 +8,10 @@ interface TaskDao {
     fun getAllTasks(): List<Task>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertTask(task: Task)
+    fun insertTask(task: Task): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertTasks(tasks: List<Task>)
 
     @Update
     fun updateTask(task: Task)
@@ -18,4 +21,7 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE id = :id LIMIT 1")
     fun getTaskById(id: Long): Task?
+
+    @Query("DELETE FROM tasks")
+    fun deleteAllTasks()
 }
